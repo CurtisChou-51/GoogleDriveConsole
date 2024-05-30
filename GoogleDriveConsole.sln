@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34622.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoogleDriveConsole", "GoogleDriveConsole\GoogleDriveConsole.csproj", "{DDCBC030-E8FD-4FA8-BB2F-4CA2F2840AD1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DDCBC030-E8FD-4FA8-BB2F-4CA2F2840AD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDCBC030-E8FD-4FA8-BB2F-4CA2F2840AD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDCBC030-E8FD-4FA8-BB2F-4CA2F2840AD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDCBC030-E8FD-4FA8-BB2F-4CA2F2840AD1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0BC36AF2-7327-4F34-B1E2-AC6FB1168169}
+	EndGlobalSection
+EndGlobal
