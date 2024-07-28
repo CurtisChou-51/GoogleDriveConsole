@@ -1,4 +1,5 @@
 ﻿using Google.Apis.Auth.OAuth2;
+using Google.Apis.Download;
 using Google.Apis.Drive.v3;
 using Google.Apis.Drive.v3.Data;
 
@@ -7,6 +8,8 @@ namespace GoogleDriveConsole
 	public class MyDriveService
 	{
 		private DriveService _driveService;
+
+		public Action<IDownloadProgress> DownloadProgressChanged;
 
 		public MyDriveService(FileStream credentialJsonFs)
 		{
@@ -17,6 +20,7 @@ namespace GoogleDriveConsole
 				HttpClientInitializer = credential,
 				ApplicationName = "_applicationName"
 			});
+			DownloadProgressChanged = progress => { };
 		}
 
 		public IEnumerable<Google.Apis.Drive.v3.Data.File> GetFilesByFolderName(string folderName)
@@ -54,6 +58,15 @@ namespace GoogleDriveConsole
 		public async Task<Google.Apis.Download.IDownloadProgress> DownloadAsync(string Id, FileStream saveFileStream)
 		{
 			var req = _driveService.Files.Get(Id);
+			req.MediaDownloader.ProgressChanged += DownloadProgressChanged;
+			return await req.DownloadAsync(saveFileStream);
+		}
+
+		public async Task<Google.Apis.Download.IDownloadProgress> DownloadAsync(string Id, FileStream saveFileStream, int chunkSize)
+		{
+			var req = _driveService.Files.Get(Id);
+			req.MediaDownloader.ProgressChanged += DownloadProgressChanged;
+			req.MediaDownloader.ChunkSize = chunkSize;
 			return await req.DownloadAsync(saveFileStream);
 		}
 	}
