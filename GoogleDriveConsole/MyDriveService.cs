@@ -25,13 +25,52 @@ namespace GoogleDriveConsole
 
         public IEnumerable<Google.Apis.Drive.v3.Data.File> GetFilesByFolderName(string folderName)
         {
-            var folders = GetFilesImpl($" trashed = false and mimeType = 'application/vnd.google-apps.folder' and name = '{folderName}' ");
-            foreach (var folder in folders)
+            var topFolder = GetTopFolderByName(folderName);
+            return topFolder == null ? [] : GetSubFiles(topFolder);
+        }
+
+        public IEnumerable<Google.Apis.Drive.v3.Data.File> GetFilesByFolderPath(string[] folderPath)
+        {
+            var targetFolder = GetFolderByFolderPath(folderPath);
+            return targetFolder == null ? [] : GetSubFiles(targetFolder);
+        }
+
+        private Google.Apis.Drive.v3.Data.File? GetFolderByFolderPath(string[] folderPath)
+        {
+            string folderName = folderPath.First();
+            var topFolder = GetTopFolderByName(folderName);
+            if (topFolder == null)
+                return null;
+
+            int i = 1;
+            var subFolder = topFolder;
+            do
             {
-                var result = GetFilesImpl($" trashed = false and mimeType != 'application/vnd.google-apps.folder' and parents in '{folder.Id}' ");
-                foreach (var file in result)
-                    yield return file;
-            }
+                if (i == folderPath.Length)
+                    return subFolder;
+                subFolder = GetSubFolders(subFolder).FirstOrDefault(x => x.Name == folderPath[i]);
+                i++;
+            } while (subFolder != null);
+            return subFolder;
+        }
+
+        /// <summary> 取得最上層資料夾 </summary>
+        private Google.Apis.Drive.v3.Data.File? GetTopFolderByName(string folderName)
+        {
+            return GetFilesImpl($" trashed = false and mimeType = 'application/vnd.google-apps.folder' and name = '{folderName}' ")
+                .FirstOrDefault(x => x.Parents == null);
+        }
+
+        /// <summary> 取得資料夾下的檔案 </summary>
+        private IEnumerable<Google.Apis.Drive.v3.Data.File> GetSubFiles(Google.Apis.Drive.v3.Data.File folder)
+        {
+            return GetFilesImpl($" trashed = false and mimeType != 'application/vnd.google-apps.folder' and parents in '{folder.Id}' ");
+        }
+
+        /// <summary> 取得資料夾下的資料夾 </summary>
+        private IEnumerable<Google.Apis.Drive.v3.Data.File> GetSubFolders(Google.Apis.Drive.v3.Data.File folder)
+        {
+            return GetFilesImpl($" trashed = false and mimeType = 'application/vnd.google-apps.folder' and parents in '{folder.Id}' ");
         }
 
         private IEnumerable<Google.Apis.Drive.v3.Data.File> GetFilesImpl(string Q)

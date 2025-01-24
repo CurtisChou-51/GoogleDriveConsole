@@ -24,7 +24,7 @@ namespace GoogleDriveConsole
             MyDriveService myService = InitMyDriveService(setting.GoogleCredentialFile);
 
             Directory.CreateDirectory(setting.FileSaveFolder);
-            var files = myService.GetFilesByFolderName(setting.GoogleFolderName).ToList();
+            var files = myService.GetFilesByFolderPath(setting.GoogleFolderPath).ToList();
             Console.WriteLine($"files Count = {files.Count}");
             foreach (var file in files)
             {
