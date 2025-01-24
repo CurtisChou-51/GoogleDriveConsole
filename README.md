@@ -37,3 +37,9 @@
 
 ## 10. 金鑰 JSON 檔案放到本機執行路徑
 ![](images/10.png)
+
+## 11. 路徑設定
+- 如果下載 GoogleDrive 路徑為 `測試共享資料夾/aaa/bbb` 資料夾的檔案，設定為：
+```json
+"GoogleFolderPath": [ "測試共享資料夾", "aaa", "bbb" ]
+```
