@@ -1,5 +1,6 @@
 ﻿using Google.Apis.Download;
 using Microsoft.Extensions.Configuration;
+using System.Text;
 
 namespace GoogleDriveConsole
 {
@@ -9,6 +10,9 @@ namespace GoogleDriveConsole
 
         static async Task Main(string[] args)
         {
+            Console.InputEncoding = Encoding.UTF8;
+            Console.OutputEncoding = Encoding.UTF8;
+
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false);
@@ -24,7 +28,10 @@ namespace GoogleDriveConsole
             MyDriveService myService = InitMyDriveService(setting.GoogleCredentialFile);
 
             Directory.CreateDirectory(setting.FileSaveFolder);
-            var files = myService.GetFilesByFolderPath(setting.GoogleFolderPath).ToList();
+            var googleFolderPath = args is [] ? setting.GoogleFolderPath : args;
+
+            Console.WriteLine($"GoogleFolderPath = {string.Join("/", googleFolderPath)}");
+            var files = myService.GetFilesByFolderPath(googleFolderPath).ToList();
             Console.WriteLine($"files Count = {files.Count}");
             foreach (var file in files)
             {
