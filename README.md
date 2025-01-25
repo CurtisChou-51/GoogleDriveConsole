@@ -39,7 +39,18 @@
 ![](images/10.png)
 
 ## 11. 路徑設定
-- 如果下載 GoogleDrive 路徑為 `測試共享資料夾/aaa/bbb` 資料夾的檔案，設定為：
+- 下載 GoogleDrive 路徑為 `測試共享資料夾/aaa/bbb` 資料夾的檔案為例，可使用 appsettings.json 或是 cmd 參數設置：
+
+1. 透過 appsettings.json 設定：
 ```json
 "GoogleFolderPath": [ "測試共享資料夾", "aaa", "bbb" ]
 ```
+
+2. 透過 cmd 參數：
+```cmd
+GoogleDriveConsole "測試共享資料夾" "aaa" "bbb"
+```
+
+- 有輸入 cmd 參數時會優先使用 cmd 參數
+- cmd 編碼為 UTF-8，可參考 [example.bat](GoogleDriveConsole/example.bat) 設置
+![](images/11.png)
