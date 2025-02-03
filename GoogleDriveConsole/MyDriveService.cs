@@ -2,6 +2,7 @@
 using Google.Apis.Download;
 using Google.Apis.Drive.v3;
 using Google.Apis.Drive.v3.Data;
+using File = Google.Apis.Drive.v3.Data.File;
 
 namespace GoogleDriveConsole
 {
@@ -23,19 +24,19 @@ namespace GoogleDriveConsole
             DownloadProgressChanged = progress => { };
         }
 
-        public IEnumerable<Google.Apis.Drive.v3.Data.File> GetFilesByFolderName(string folderName)
+        public IEnumerable<File> GetFilesByFolderName(string folderName)
         {
             var topFolder = GetTopFolderByName(folderName);
             return topFolder == null ? [] : GetSubFiles(topFolder);
         }
 
-        public IEnumerable<Google.Apis.Drive.v3.Data.File> GetFilesByFolderPath(string[] folderPath)
+        public IEnumerable<File> GetFilesByFolderPath(string[] folderPath)
         {
             var targetFolder = GetFolderByFolderPath(folderPath);
             return targetFolder == null ? [] : GetSubFiles(targetFolder);
         }
 
-        private Google.Apis.Drive.v3.Data.File? GetFolderByFolderPath(string[] folderPath)
+        private File? GetFolderByFolderPath(string[] folderPath)
         {
             string folderName = folderPath.First();
             var topFolder = GetTopFolderByName(folderName);
@@ -55,25 +56,25 @@ namespace GoogleDriveConsole
         }
 
         /// <summary> 取得最上層資料夾 </summary>
-        private Google.Apis.Drive.v3.Data.File? GetTopFolderByName(string folderName)
+        private File? GetTopFolderByName(string folderName)
         {
             return GetFilesImpl($" trashed = false and mimeType = 'application/vnd.google-apps.folder' and name = '{folderName}' ")
                 .FirstOrDefault(x => x.Parents == null);
         }
 
         /// <summary> 取得資料夾下的檔案 </summary>
-        private IEnumerable<Google.Apis.Drive.v3.Data.File> GetSubFiles(Google.Apis.Drive.v3.Data.File folder)
+        private IEnumerable<File> GetSubFiles(File folder)
         {
             return GetFilesImpl($" trashed = false and mimeType != 'application/vnd.google-apps.folder' and parents in '{folder.Id}' ");
         }
 
         /// <summary> 取得資料夾下的資料夾 </summary>
-        private IEnumerable<Google.Apis.Drive.v3.Data.File> GetSubFolders(Google.Apis.Drive.v3.Data.File folder)
+        private IEnumerable<File> GetSubFolders(File folder)
         {
             return GetFilesImpl($" trashed = false and mimeType = 'application/vnd.google-apps.folder' and parents in '{folder.Id}' ");
         }
 
-        private IEnumerable<Google.Apis.Drive.v3.Data.File> GetFilesImpl(string Q)
+        private IEnumerable<File> GetFilesImpl(string Q)
         {
             FilesResource.ListRequest req = _driveService.Files.List();
             req.PageSize = 1000;
@@ -83,7 +84,7 @@ namespace GoogleDriveConsole
 
             while (fileFeedList != null)
             {
-                foreach (Google.Apis.Drive.v3.Data.File file in fileFeedList.Files)
+                foreach (File file in fileFeedList.Files)
                     yield return file;
 
                 if (fileFeedList.NextPageToken == null)
@@ -94,14 +95,14 @@ namespace GoogleDriveConsole
             }
         }
 
-        public async Task<Google.Apis.Download.IDownloadProgress> DownloadAsync(string Id, FileStream saveFileStream)
+        public async Task<IDownloadProgress> DownloadAsync(string Id, FileStream saveFileStream)
         {
             var req = _driveService.Files.Get(Id);
             req.MediaDownloader.ProgressChanged += DownloadProgressChanged;
             return await req.DownloadAsync(saveFileStream);
         }
 
-        public async Task<Google.Apis.Download.IDownloadProgress> DownloadAsync(string Id, FileStream saveFileStream, int chunkSize)
+        public async Task<IDownloadProgress> DownloadAsync(string Id, FileStream saveFileStream, int chunkSize)
         {
             var req = _driveService.Files.Get(Id);
             req.MediaDownloader.ProgressChanged += DownloadProgressChanged;
